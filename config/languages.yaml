@@ -1,0 +1,40 @@
+supported_languages:
+  en:
+    name: English
+    script: Latin
+    tokenizer: whitespace
+  hi:
+    name: Hindi
+    script: Devanagari
+    tokenizer: whitespace
+  mr:
+    name: Marathi
+    script: Devanagari
+    tokenizer: whitespace
+  ta:
+    name: Tamil
+    script: Tamil
+    tokenizer: whitespace
+  bn:
+    name: Bengali
+    script: Bengali
+    tokenizer: whitespace
+  pa:
+    name: Punjabi
+    script: Gurmukhi
+    tokenizer: whitespace
+  te:
+    name: Telugu
+    script: Telugu
+    tokenizer: whitespace
+
+# Language pairs with available training data
+available_pairs:
+  - [en, hi]
+  # Future pairs — uncomment as datasets are added:
+  # - [en, mr]
+  # - [en, ta]
+  # - [en, bn]
+  # - [en, pa]
+  # - [en, te]
+  # - [hi, en]
