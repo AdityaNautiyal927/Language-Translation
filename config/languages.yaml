@@ -1,0 +1,99 @@
+supported_languages:
+  en:
+    name: "English"
+    iso_639_1: "en"
+    iso_639_3: "eng"
+    script: "Latin"
+    tokenizer: "spacy"          
+    spacy_model: "en_core_web_sm"
+    direction: "ltr"
+    status: "active"            
+
+  hi:
+    name: "Hindi"
+    iso_639_1: "hi"
+    iso_639_3: "hin"
+    script: "Devanagari"
+    tokenizer: "sentencepiece"
+    sentencepiece_model: "models/spm/hi.model"
+    direction: "ltr"
+    status: "active"
+
+  mr:
+    name: "Marathi"
+    iso_639_1: "mr"
+    iso_639_3: "mar"
+    script: "Devanagari"
+    tokenizer: "sentencepiece"
+    sentencepiece_model: "models/spm/mr.model"
+    direction: "ltr"
+    status: "planned"
+
+  ta:
+    name: "Tamil"
+    iso_639_1: "ta"
+    iso_639_3: "tam"
+    script: "Tamil"
+    tokenizer: "sentencepiece"
+    sentencepiece_model: "models/spm/ta.model"
+    direction: "ltr"
+    status: "planned"
+
+  bn:
+    name: "Bengali"
+    iso_639_1: "bn"
+    iso_639_3: "ben"
+    script: "Bengali"
+    tokenizer: "sentencepiece"
+    sentencepiece_model: "models/spm/bn.model"
+    direction: "ltr"
+    status: "planned"
+
+  pa:
+    name: "Punjabi"
+    iso_639_1: "pa"
+    iso_639_3: "pan"
+    script: "Gurmukhi"
+    tokenizer: "sentencepiece"
+    sentencepiece_model: "models/spm/pa.model"
+    direction: "ltr"
+    status: "planned"
+
+# --- Translation pairs ---
+translation_pairs:
+  - src: "en"
+    tgt: "hi"
+    status: "active"
+    dataset_sources:
+      - "IITB English-Hindi Corpus"
+      - "Samanantar"
+    notes: "Primary supported pair. ~1.6M sentence pairs available."
+
+  - src: "en"
+    tgt: "mr"
+    status: "planned"
+    dataset_sources:
+      - "Samanantar"
+    notes: "Planned for Phase 2."
+
+  - src: "en"
+    tgt: "ta"
+    status: "planned"
+    dataset_sources:
+      - "Samanantar"
+      - "WAT 2021"
+    notes: "Planned for Phase 2."
+
+  - src: "en"
+    tgt: "bn"
+    status: "planned"
+    dataset_sources:
+      - "Samanantar"
+    notes: "Planned for Phase 2."
+
+  - src: "en"
+    tgt: "pa"
+    status: "planned"
+    dataset_sources:
+      - "Samanantar"
+    notes: "Planned for Phase 3."
