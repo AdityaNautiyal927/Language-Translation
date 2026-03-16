@@ -39,31 +39,23 @@ class Encoder(nn.Module):
         )
         self.dropout = nn.Dropout(dropout)
 
-        # Project bidirectional final hidden state → decoder hidden_dim
         if bidirectional:
             self.fc_hidden = nn.Linear(hidden_dim * 2, hidden_dim)
 
     def forward(self, src: torch.Tensor):
      
-        # (batch, src_len, embedding_dim)
         embedded = self.dropout(self.embedding(src))
 
-        # encoder_outputs: (batch, src_len, hidden_dim * num_directions)
-        # hidden         : (num_layers * num_directions, batch, hidden_dim)
         encoder_outputs, hidden = self.gru(embedded)
 
         if self.bidirectional:
-            # Concatenate the final forward and backward hidden states
-            # hidden[-2]: last forward layer;  hidden[-1]: last backward layer
-            fwd = hidden[-2, :, :]  # (batch, hidden_dim)
-            bwd = hidden[-1, :, :]  # (batch, hidden_dim)
+            fwd = hidden[-2, :, :]  
+            bwd = hidden[-1, :, :]  
             hidden = torch.tanh(self.fc_hidden(torch.cat([fwd, bwd], dim=1)))
         else:
-            # (batch, hidden_dim) — take last layer's hidden state
             hidden = hidden[-1, :, :]
 
         return encoder_outputs, hidden
-
 
 
 class Decoder(nn.Module):
@@ -86,7 +78,7 @@ class Decoder(nn.Module):
         self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=pad_idx)
         self.attention = BahdanauAttention(encoder_hidden_dim, hidden_dim, attention_dim)
         self.gru = nn.GRU(
-            embedding_dim + encoder_hidden_dim,  # input = [token_embed; context]
+            embedding_dim + encoder_hidden_dim,     
             hidden_dim,
             num_layers=num_layers,
             batch_first=True,
@@ -97,36 +89,28 @@ class Decoder(nn.Module):
 
     def forward(
         self,
-        tgt_token: torch.Tensor,        # (batch,)  — current target token id
-        hidden: torch.Tensor,           # (batch, hidden_dim) — prev decoder hidden
-        encoder_outputs: torch.Tensor,  # (batch, src_len, encoder_hidden_dim)
-        src_mask: torch.Tensor = None,  # (batch, src_len)
+        tgt_token: torch.Tensor,        
+        hidden: torch.Tensor,           
+        encoder_outputs: torch.Tensor,  
+        src_mask: torch.Tensor = None,  
     ):
         
-        # (batch, 1, embedding_dim)
         embedded = self.dropout(self.embedding(tgt_token.unsqueeze(1)))
 
-        # Attention context
         context, attn_weights = self.attention(hidden, encoder_outputs, src_mask)
-        # context: (batch, encoder_hidden_dim)
 
-        # Concat embedding + context for GRU input: (batch, 1, emb+enc_h)
         gru_input = torch.cat([embedded, context.unsqueeze(1)], dim=2)
 
-        # GRU step
-        # gru_out: (batch, 1, hidden_dim)
-        # new_hidden_3d: (1, batch, hidden_dim)
         gru_out, new_hidden_3d = self.gru(
             gru_input, hidden.unsqueeze(0)
         )
-        new_hidden = new_hidden_3d.squeeze(0)  # (batch, hidden_dim)
+        new_hidden = new_hidden_3d.squeeze(0)  
 
-        # Dense prediction: concat gru_out, context, embedded
-        gru_out_sq = gru_out.squeeze(1)         # (batch, hidden_dim)
-        embedded_sq = embedded.squeeze(1)       # (batch, embedding_dim)
+        gru_out_sq = gru_out.squeeze(1)         
+        embedded_sq = embedded.squeeze(1)       
         prediction = self.fc_out(
             torch.cat([gru_out_sq, context, embedded_sq], dim=1)
-        )  # (batch, vocab_size)
+        )  
 
         return prediction, new_hidden, attn_weights
 
@@ -152,8 +136,8 @@ class Seq2Seq(nn.Module):
 
     def forward(
         self,
-        src: torch.Tensor,              # (batch, src_len)
-        tgt: torch.Tensor,              # (batch, tgt_len)  — includes <SOS>
+        src: torch.Tensor,              
+        tgt: torch.Tensor,              
         teacher_forcing_ratio: float = None,
     ) -> torch.Tensor:
        
@@ -163,21 +147,17 @@ class Seq2Seq(nn.Module):
         batch_size, tgt_len = tgt.shape
         tgt_vocab_size = self.decoder.vocab_size
 
-        # Storage for decoder outputs
         outputs = torch.zeros(batch_size, tgt_len - 1, tgt_vocab_size, device=src.device)
 
-        # Encode
         encoder_outputs, hidden = self.encoder(src)
-        src_mask = self.create_src_mask(src)  # (batch, src_len)
+        src_mask = self.create_src_mask(src)  
 
-        # First decoder input: <SOS> token
         dec_input = tgt[:, 0]
 
         for t in range(1, tgt_len):
             prediction, hidden, _ = self.decoder(dec_input, hidden, encoder_outputs, src_mask)
             outputs[:, t - 1, :] = prediction
 
-            # Teacher forcing decision
             use_teacher = random.random() < teacher_forcing_ratio
             if use_teacher:
                 dec_input = tgt[:, t]
