@@ -119,7 +119,6 @@ def tokenize_indic(text: str) -> List[str]:
     return text.split()
 
 
-
 def read_parallel_corpus(
     src_path: str,
     tgt_path: str,
