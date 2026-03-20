@@ -1,12 +1,26 @@
 
+# Core deep learning
 torch>=2.1.0
-torchvision>=0.16.0          
-pandas>=2.0.0                
+
+# Data & utilities
+pandas>=2.0.0
 numpy>=1.24.0
-sacrebleu>=2.3.1             
-indic-nlp-library>=0.92      
-pyyaml>=6.0                  
+tqdm>=4.66.0
+
+# Tokenizers (used by languages.yaml / preprocessing)
+sentencepiece>=0.1.99
+spacy>=3.7.0
+
+# Evaluation
+sacrebleu>=2.3.1
+
+# Indic NLP
+indic-nlp-library>=0.92
+
+# Configuration
+pyyaml>=6.0
+
+# FastAPI inference server
 fastapi>=0.110.0
 uvicorn[standard]>=0.29.0
 pydantic>=2.0.0
-tqdm>=4.66.0               
